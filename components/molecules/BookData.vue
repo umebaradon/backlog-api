@@ -9,7 +9,7 @@
             div.-text-block
                 p.-publisher 著者： {{bookData.volumeInfo.publisher}}
                 p.-publisher-date {{bookData.volumeInfo.publishedDate}}
-                nuxt-link.-description(@click.native.stop="openModal" to="") 
+                nuxt-link.-description(@click.native.stop="openModal" to="")
                     p {{bookData.volumeInfo.description}}
                     div.-view-more
                         p 詳細

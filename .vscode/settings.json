@@ -1,0 +1,18 @@
+{
+  "files.trimTrailingWhitespace": true
+  // "editor.tabSize": 2,
+  // "vetur.format.options.useTabs": true,
+  // "prettier.useTabs": true,
+  // "editor.fontSize": 14,
+  // "editor.renderWhitespace": "all",
+  // "editor.insertSpaces": false,
+  // "editor.wordWrap": "on",
+  // "[vue]": {
+  //   "editor.tabSize": 2, // インデントレベルは「2」
+  //   "editor.formatOnSave": true, // 保存時に自動整形を行う
+  //   "editor.formatOnPaste": false, // ペースト時に自動整形を行わない
+  //   "editor.formatOnType": false, // 入力後に自動整形を行わない
+  //   "editor.insertSpaces": false
+  // }
+  // "prettier.vueIndentScriptAndStyle": true
+}
