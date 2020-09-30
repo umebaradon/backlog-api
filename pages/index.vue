@@ -2,66 +2,49 @@
 .cover
 	section.-head
 		.-inner
-			p.-app-name Book memo!
-			img.-app-logo(
-				src="~/assets/svg/book.svg",
-				width="30",
-				height="auto",
-				alt="本アイコン"
-			)
-			h1 本を検索してください
 			nuxt-link.-search-link(to="/result")
 				img(src="~/assets/svg/search.svg", width="30", height="auto", alt="検索アイコン")
 	.-wiki-contents
 		ul.-list
 			li.-item(v-for="wikiList in wikiLists" :key="wikiList.id")
-				nuxt-link(:to="'/wikis/' + wikiList.id" :data-id="wikiList.id")
-					span {{ wikiList.name | wikiTitle}}
-					div {{ wikiList.name }}
-					div {{ wikiList.created }}
-					//- div {{wikiList.stars[0].url}}
-	//- hr
-	//- div
-		//- <!-- <p>{{ $store.state.message}}</p>
-		//- <!-- <p>{{ $store.state.hello.message}}</p>
+				wiki-list(:wiki-list="wikiList")
 
-		//- <!-- <button v-on:click="$store.commit('updateMassege')">Update</button> -->
-		//- <!-- <button v-on:click="$store.commit('updateMassege','Commit with payload')">Update</button> -->
-		//- <!-- <button v-on:
-		click="$store.dispatch('updateMassegeAction')">Dispatch</button> -->
-		//- <!-- <button v-on:click="$store.dispatch('updateMassegeAction','Dispatch with payload')">Dispatch</button> -->
-		//- <!-- <button v-on:click="$store.dispatch('hello/updateMassegeAction','Dispatch with payload')">Dispatch</button> -->
-		//- Counter
-
-
-	//- drawer-base
+	modal-base(title="スペース情報入力" :isActive="isActive" @close="closeModal")
+		template(v-slot:contents)
+			p スペース名を入力してください
+			input(v-modal="spaceName" placeholder="スペース名")
+			button(type="button" @click="doUpdate") 保存する
 </template>
 
 <script>
-// import Counter from '~/components/Counter.vue';
-// const axios = require('axios')
 import axios from "axios";
-// import func from '../vue-temp/vue-editor-bridge';
-
-// let url = 'https://www.googleapis.com/books/v1/volumes'
-// let url = 'https://jsonplaceholder.typicode.com/users'
-
-// let isModalActive
+import ModalBase from "~/components/atom/ModalBase.vue";
+import WikiList from "~/components/atom/WikiList.vue";
+// import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
 	data: () => {
 		return {
 			show: true,
-			wikiLists: []
+			wikiLists: [],
+			isActive: {
+				type: Boolean,
+				default: true
+			},
+			spaceName: ''
 		}
+	},
+	computed: {
 	},
 	created: function() {
 		this.getWikiList();
 	},
+	mounted() {
+	},
 	methods: {
 		getWikiList: function() {
 			const backlogSpace = "nulab-exam";
-			const apiKey = "Ge8hYlvubnSHTKSIx2D47gMLsPlSiYbYTtkwTr7RNpMSBxFHWgogz6nIf4dWkjtp";
+			const apiKey = process.env.API_KEY;
 			const wikiListUrl = "wikis";
 			// const wikiListUrl = 'projects'
 			// let wikiId = '/'+90606
@@ -75,55 +58,26 @@ export default {
 			// sendData.append('all', false)
 			// sendData.append('wikiId', wikiId )
 
-			const BacklogUrl =
-				"https://" +
-				backlogSpace +
-				".backlog.jp/api/v2/" +
-				wikiUrl +
-				"?" +
-				sendData;
-			console.log(BacklogUrl);
-
-			axios
-				.get(BacklogUrl)
-				.then(res => {
-					// this.wikiLists = res.data
-					// console.log(data[0].id)
-					let data = res.data;
-					// data.sort(function(val1, val2) {
-					//   return val1.created < val2.created ? 1 : -1;
-					// });
-					this.wikiLists = data;
-					// for(var i = 0; i < data.length; i++) {
-					//   // console.log(data[i].created+'：'+data[i].content)
-					//   if(data[i].stars.length){
-					//     console.log(data[i].stars)
-					//     this.wikiLists = data[i]
-					//   }
-					// }
-					// console.log(sendData)
-					console.log(this.wikiLists);
-				})
-				.catch(error => {
-					console.log("エラー");
-				});
+			const BacklogUrl = "https://" + backlogSpace + ".backlog.jp/api/v2/" + wikiUrl + "?" + sendData;
+			axios.get(BacklogUrl)
+			.then(res => {
+				let data = res.data;
+				this.wikiLists = data;
+			})
+			.catch(error => {
+				console.log("エラー");
+			});
+		},
+		closeModal() {
+			this.isActive = false
+		},
+		doUpdate() {
 		}
 	},
-	computed: {},
 	components: {
-		// Counter
-		// ModalBase
+		ModalBase,
+		WikiList
 	}
-	// asyncData( {params, error} ){
-	//   return axios.get(url)
-	//     .then((res) => {
-	//       return { books: res.data }
-	//     })
-	//     .catch((e => {
-	//       // console.log(e.response.status)
-	//       error ({ books: e.response.status, message: 'ERROR!!!!!!'})
-	//     }))
-	// },
 }
 </script>
 
@@ -133,8 +87,7 @@ export default {
 	overflow-x: hidden
 	text-align: center
 	.-head
-		height: 40vh
-		padding: 8vh 8vw
+		height: 80px
 		position: relative
 		.-inner
 			position: absolute

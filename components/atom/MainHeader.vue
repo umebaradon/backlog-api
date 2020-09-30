@@ -8,11 +8,14 @@ div.main-header
 			:class="{'-displayn':isShow}"
 		)
 			img(alt="トップへ戻るボタン" src="~/assets/svg/arrow.svg")
-		h1.-title {{ wikiMainTitle }} のWiki
+		h1.-title
+			span {{ getTitle }} Wiki
+	//- p {{ $store.state.wiki.wikiContents}}
 </template>
 
 <script>
-// import {mapActions, mapState} from 'vuex'
+// import { mapState, mapGetters,mapMutations, mapActions } from 'vuex'
+import {mapGetters, mapActions} from 'vuex'
 
 export default {
 	name: 'MainHeader',
@@ -26,14 +29,13 @@ export default {
 				type: Boolean,
 				default: true
 			},
-			// wikiMainTitle: $store.state.wikiMainTitle
-			wikiMainTitle: 'タイトル'
+			wikiProject: Array
 		}
 	},
 	computed: {
-		// ...mapActions({
-		// 	getTitle: 'index/getTitle',
-		// })
+		...mapGetters('wiki', [
+			'getTitle'
+		]),
 	},
 	watch: {
 		'$route' (to, from) {
@@ -43,17 +45,15 @@ export default {
 	},
 	created() {
 		console.log('created')
-
 	},
 	mounted() {
 		console.log('mounted')
 		this.isViewBack()
-		// this.getTitle()
+		this.getContentsAction()
 	},
 	methods: {
 		isViewBack() {
 			let path = location.pathname
-			console.log('パス：'+path)
 			this.isShow = false
 			if( path == '/' ){
 				return this.isBackButton = false
@@ -61,9 +61,9 @@ export default {
 				return this.isBackButton = true
 			}
 		},
-		// ...mapActions({
-		// 	getTitle: 'index/getTitle',
-		// })
+		...mapActions('wiki', [
+			'getContentsAction'
+		]),
 	}
 }
 </script>
