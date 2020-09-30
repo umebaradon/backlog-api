@@ -3,7 +3,6 @@ div.wiki-page
 	p {{wikiPage.name}}
 	p id:{{ id }}
 	div
-		//- p {{wikiPage.name}}
 		hr
 		div(v-html="compiledMarkdownText")
 </template>
@@ -15,7 +14,6 @@ import marked from 'marked'
 export default {
 	data: function() {
 		return {
-			// message: "/wikis/_id.vueを表示中",
 			id: this.$route.params.id,
 			wikiPage: [],
 			markdownText: '',
@@ -103,6 +101,8 @@ export default {
 	height: 100vh
 	overflow-x: hidden
 	padding: 32px 8vw
-	h1
-		border-bottom: solid 2px #ddd
+	h1,h2
+		margin: 24px 0 16px
+	h3,h4,h5
+		margin: 20px 0 8px
 </style>

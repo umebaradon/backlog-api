@@ -3,12 +3,11 @@
 		div(v-if="isActive").base-modal
 			div.-contents
 				header
-					h1.-title タイトル
-					button(@click="closeModal") 閉じる
+					h1.-title {{title}}
 				slot(name="contents")
 				slot(name="footer")
 					footer
-						double-button
+						button(@click="closeModal") 閉じる
 			div.-overlay
 </template>
 
@@ -21,8 +20,10 @@ export default {
 	},
 	props: {
 		isActive: {
-			type: Boolean,
 			default: false
+		},
+		title: {
+			type: String
 		}
 	},
 	methods: {
