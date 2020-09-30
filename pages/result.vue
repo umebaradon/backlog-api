@@ -1,47 +1,29 @@
 <template lang="pug">
 dev.result
-	//- form(@submit.prevent="")
 	.search-box
 		router-link.-link(to="/")
-			img.-arrow(
-				src="~/assets/svg/arrow.svg",
-				width="30",
-				height="auto",
-				alt="矢印アイコン"
-			)
-		//- button(@click.prevent="openModal")
 		label(for="search-input")
 			input#search-input(type="text", placeholder="キーワードを入力", v-model="keyword")
-			button(@click.prevent="getList(keyword)")
-				//- button(@click.prevent="getWiki(keyword)")
+			button(@click.prevent="getWikiList(keyword)")
 				img(src="~/assets/svg/search.svg", width="16", height="auto", alt="矢印アイコン")
 	.-keyword-info(v-if="searchNum")
-		h1 「{{ keyword }}」の検索結果
-		span {{ searchNum }}
-	ul
-		//- li(v-for="(item in books)", :key="item")
-			book-data(:book-data="item", @openModal="openModal")
-		li(v-for="item in books")
-			book-data(:book-data="item", @openModal="openModal")
-	modal-base(:isActive="isModalActive", @close="closeModal")
+		h1 「{{ keyword }}」の検索結果 {{ searchNum }} 件
+	.-wiki-contents
+		ul.-list
+			li.-item(v-for="wikiList in wikiLists" :key="wikiList.id")
+				wiki-list(:wiki-list="wikiList")
 </template>
 
 <script>
 import axios from "axios";
-import ModalBase from "~/components/atom/ModalBase.vue";
-import BookData from "~/components/molecules/BookData.vue";
-
-let isModalActive;
-
-const url = "https://www.googleapis.com/books/v1/volumes";
+import WikiList from "~/components/atom/WikiList.vue";
 
 export default {
   data: function() {
     return {
       keyword: String,
       keyword: "",
-      isModalActive: false,
-      books: [],
+      wikiLists: [],
       searchNum: Number,
       searchNum: ""
     };
@@ -53,33 +35,29 @@ export default {
     closeModal() {
       this.isModalActive = false;
     },
-    getList(keyword) {
-      // console.log(url + '?q=' +keyword)
-      const params = {
-        q: "search" + keyword,
-        Country: "JP",
-        maxResults: 20,
-        startIndex: 0,
-        orderBy: "relevance"
-      };
-      axios
-        .get(url, { params: params })
-        .then(res => {
-          this.books = res.data.items;
-          this.searchNum = res.data.totalItems;
-          const data = res.data.items;
-          for (var key in data) {
-            console.log(key + ":" + data[key].volumeInfo.title);
-          }
-        })
-        .catch(error => {
-          console.log("エラー");
-        });
-    }
+		getWikiList(keyword) {
+			const backlogSpace = "nulab-exam";
+			const apiKey = process.env.API_KEY
+			const wikiListUrl = "wikis";
+			let wikiUrl = wikiListUrl;
+			let sendData = new URLSearchParams();
+			sendData.append("apiKey", apiKey);
+			sendData.append("projectIdOrKey", 'UMEBARA');
+			sendData.append('keyword', keyword)
+			const BacklogUrl = "https://" + backlogSpace + ".backlog.jp/api/v2/" + wikiUrl + "?" + sendData;
+			axios.get(BacklogUrl)
+			.then(res => {
+				let data = res.data;
+				this.wikiLists = data;
+				this.searchNum = this.wikiLists.length
+			})
+			.catch(error => {
+				console.log("エラー");
+			});
+		},
   },
   components: {
-    BookData,
-    ModalBase
+    WikiList
   }
 };
 </script>
@@ -112,4 +90,25 @@ export default {
 	vertical-align: middle
 	h1
 		font-size: 0.8em
+.-wiki-contents
+	padding: 8px
+	.-list
+		display: flex
+		justify-content: space-between
+		align-items: center
+		flex-wrap: wrap
+		.-item
+			background-color: #68e8cb
+			padding: 8px
+			border-radius: 8px
+			height: 14vh
+			width: 49%
+			margin-bottom: 8px
+			text-align: left
+			a
+				display: block
+				text-decoration: none
+				color: #fff
+				font-weight: bold
+				height: 100%
 </style>
